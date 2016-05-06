@@ -14,7 +14,7 @@
 
 
  <!-- Delete -->
-  <string Field="DeleteMissing">Delete missing enries</string>
+  <string Field="DeleteMissing">Delete missing entries</string>
 
  <!-- Status -->
   <string Field="StatusPercent">%</string>
@@ -24,5 +24,7 @@
   <string Field="FHArtists">Artists</string>
   <string Field="FHAlbums">Albums</string>
   <string Field="FHVideos">Videos</string>
+
+  <string Field="FHSlideshow">Fanart Handler Slideshow</string>
 
 </strings>

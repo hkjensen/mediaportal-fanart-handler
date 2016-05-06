@@ -1,12 +1,11 @@
 ﻿// Type: FanartHandler.ScraperThumbWorker
-// Assembly: FanartHandler, Version=3.1.0.0, Culture=neutral, PublicKeyToken=null
+// Assembly: FanartHandler, Version=4.0.2.0, Culture=neutral, PublicKeyToken=null
 // MVID: 073E8D78-B6AE-4F86-BDE9-3E09A337833B
-// Assembly location: D:\Mes documents\Desktop\FanartHandler.dll
 
 using NLog;
+
 using System;
 using System.ComponentModel;
-using System.IO;
 using System.Threading;
 
 namespace FanartHandler
@@ -31,9 +30,12 @@ namespace FanartHandler
       {
         if (Utils.GetIsStopping() || Interlocked.CompareExchange(ref FanartHandlerSetup.Fh.SyncPointScraper, 1, 0) != 0)
           return;
+
+        Utils.WaitForDB();        
+
         Thread.CurrentThread.Priority = !FanartHandlerSetup.Fh.FHThreadPriority.Equals("Lowest", StringComparison.CurrentCulture) ? ThreadPriority.BelowNormal : ThreadPriority.Lowest;
         Thread.CurrentThread.Name = "ScraperWorker";
-        Utils.GetDbm().IsScraping = true;
+        Utils.IsScraping = true;
         Utils.AllocateDelayStop("FanartHandlerSetup-ThumbScraper");
 
         var strArray = e.Argument as string[];
@@ -42,19 +44,13 @@ namespace FanartHandler
           onlyMissing = true;
 
         Utils.GetDbm().InitialThumbScrape(onlyMissing);
-        Thread.Sleep(2000);
-
-        Utils.GetDbm().StopScraper = true;
-        Utils.GetDbm().StopScraper = false;
-        Utils.GetDbm().IsScraping = false;
 
         ReportProgress(100, "Done");
+        Utils.ThreadToSleep();
         e.Result = 0;
       }
       catch (Exception ex)
       {
-        Utils.ReleaseDelayStop("FanartHandlerSetup-ThumbScraper");
-        FanartHandlerSetup.Fh.SyncPointScraper = 0;
         logger.Error("OnDoWork: " + ex);
       }
     }
@@ -70,14 +66,14 @@ namespace FanartHandler
       {
         Utils.ReleaseDelayStop("FanartHandlerSetup-ThumbScraper");
         FanartHandlerSetup.Fh.SyncPointScraper = 0;
+        Utils.ThreadToSleep();
 
+        Utils.IsScraping = false;
         if (!Utils.GetIsStopping())
         {
-          Thread.Sleep(500); // 1000
-          Utils.GetDbm().TotArtistsBeingScraped = 0.0;
-          Utils.GetDbm().CurrArtistsBeingScraped = 0.0;
+          Utils.TotArtistsBeingScraped = 0.0;
+          Utils.CurrArtistsBeingScraped = 0.0;
         }
-        // FanartHandlerConfig F = new FanartHandlerConfig();
         FanartHandlerSetup.FhC.StopThumbScraper(FanartHandlerSetup.FhC.oMissing);
       }
       catch (Exception ex)
