@@ -2309,7 +2309,7 @@ namespace FanartHandler
 
       try
       {
-        //logger.Debug("*** SetProperty: "+property+" -> "+value) ;
+        // logger.Debug("*** SetProperty: "+property+" -> "+value) ;
         GUIPropertyManager.SetProperty(property, value);
       }
       catch (Exception ex)

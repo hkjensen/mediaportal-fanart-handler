@@ -188,7 +188,6 @@ namespace FanartHandler
               newFanart = Utils.GetProperty("#myvideosuserfanart");
               if (string.IsNullOrEmpty(newFanart))
                   newFanart = GetFilename(!string.IsNullOrEmpty(Utils.GetProperty("#imdbnumber")) ? Utils.GetProperty("#imdbnumber") : Utils.iActiveWindow != 2003 ? Utils.GetProperty("#selecteditem") : Utils.GetProperty("#title"), null, ref currSelectedGeneric, ref prevSelectedGeneric, category, flag, isMusic);
-              logger.Debug("Newfanart: " + newFanart + Utils.GetProperty("#imdbnumber"));
             }
             // Genre
             if (string.IsNullOrEmpty(newFanart) && !string.IsNullOrEmpty(SelectedGenre) && Utils.UseGenreFanart)
